@@ -4,21 +4,30 @@
  * and open the template in the editor.
  */
 package csv;
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  *
  * @author ovidi
  */
-public class CSVReader implements Iterable<String[]>{
-    public static String separator = ",";
+public class CSVReader implements Iterable<String[]>, Closeable{
+    public static final char defaultSeparator = ',';
+    public char separator;
     private final String[] fields;
     private final BufferedReader file;
     private String line;
     private boolean hasNext;
     
     public CSVReader(String filename) throws FileNotFoundException, IOException {
+        this.separator = defaultSeparator;
         this.hasNext = true;
         
         file = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
@@ -36,6 +45,7 @@ public class CSVReader implements Iterable<String[]>{
     }
 
     public CSVReader(String filename, boolean hasMetadata) throws FileNotFoundException, IOException {
+        this.separator = defaultSeparator;
         this.hasNext = true;
         file = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
         
@@ -44,7 +54,7 @@ public class CSVReader implements Iterable<String[]>{
             while("".equals(fieldsString)){
                 fieldsString = file.readLine();
             }
-            fields = fieldsString.split(separator);
+            fields = parse(fieldsString);
         }
         else{
             fields = null;
@@ -77,7 +87,7 @@ public class CSVReader implements Iterable<String[]>{
                 hasNext = false;
             }
             
-            return returnLine.split(separator);
+            return parse(returnLine);
         } else{
             return null;
         }
@@ -87,7 +97,61 @@ public class CSVReader implements Iterable<String[]>{
         return hasNext;
     }
     
+    @Override
     public Iterator<String[]> iterator(){
         return new CSVIterator(this);
+    }
+    
+    private String[] parse(String entry){
+        ArrayList<String> entryList = new ArrayList<>();
+        
+        char lastChar = ' ';
+        boolean inQuotes = false;
+        String field = "";
+        
+        for(int i = 0; i < entry.length(); i++){
+            if(!inQuotes){
+                if(entry.charAt(i) == '"'){
+                    inQuotes = true;
+                }
+                else if(entry.charAt(i) == separator){
+                    entryList.add(field);
+                    field = "";
+                }
+                else{
+                    lastChar = entry.charAt(i);
+                    field += lastChar;
+                }
+            }
+            else{
+                if(lastChar == '"'){
+                    if(entry.charAt(i) == '"'){
+                        lastChar = ' ';
+                        entry += '"';
+                    }
+                    else{
+                        inQuotes = false;
+                        entryList.add(field);
+                        field = "";
+                        lastChar = ' ';
+                    }
+                }
+                else{
+                    lastChar = entry.charAt(i);
+                    
+                    if(lastChar != '"'){
+                        field += lastChar;
+                    }
+                }
+            }
+        }
+        entryList.add(field);
+        
+        return entryList.toArray(new String[entryList.size()]);
+    }
+    
+    @Override
+    public void close() throws IOException{
+        file.close();
     }
 }
