@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Iterator;
 /**
  *
- * @author ovidi
+ * @author Ovidio1005
  */
 public class CSVIterator implements Iterator<String[]>{
     private CSVReader csv;

@@ -14,7 +14,7 @@ import java.util.zip.DataFormatException;
 
 /**
  *
- * @author ovidi
+ * @author Ovidio1005
  */
 public class CSVWriter implements Closeable{
     public static final char defaultSeparator = ',';
@@ -52,9 +52,9 @@ public class CSVWriter implements Closeable{
         }
     }
     
-    public CSVWriter(String filename, boolean useMetadata) throws FileNotFoundException, IOException{  //for appending
+    public CSVWriter(String filename, boolean useHeader) throws FileNotFoundException, IOException{  //for appending
         this.separator = defaultSeparator;
-        if(useMetadata){
+        if(useHeader){
             try (CSVReader reader = new CSVReader(filename, true)) {
                 fields = reader.getFields();
             }

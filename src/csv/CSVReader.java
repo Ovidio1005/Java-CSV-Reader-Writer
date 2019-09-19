@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author ovidi
+ * @author Ovidio1005
  */
 public class CSVReader implements Iterable<String[]>, Closeable{
     public static final char defaultSeparator = ',';
@@ -44,12 +44,12 @@ public class CSVReader implements Iterable<String[]>, Closeable{
         }
     }
 
-    public CSVReader(String filename, boolean hasMetadata) throws FileNotFoundException, IOException {
+    public CSVReader(String filename, boolean hasHeader) throws FileNotFoundException, IOException {
         this.separator = defaultSeparator;
         this.hasNext = true;
         file = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
         
-        if(hasMetadata){
+        if(hasHeader){
             String fieldsString = file.readLine();
             while("".equals(fieldsString)){
                 fieldsString = file.readLine();
