@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author Ovidio1005
  */
 public class CSVReader implements Iterable<String[]>, Closeable{
-    public static final char defaultSeparator = ',';
+    public static char defaultSeparator = ',';
     public char separator;
     private final String[] fields;
     private final BufferedReader file;

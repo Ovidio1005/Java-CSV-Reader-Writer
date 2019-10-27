@@ -17,7 +17,7 @@ import java.util.zip.DataFormatException;
  * @author Ovidio1005
  */
 public class CSVWriter implements Closeable{
-    public static final char defaultSeparator = ',';
+    public static char defaultSeparator = ',';
     public char separator;
     private final String[] fields;
     private final PrintWriter file;
